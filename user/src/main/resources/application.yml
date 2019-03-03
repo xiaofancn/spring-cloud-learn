@@ -1,0 +1,36 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: user-service
+  zipkin:
+    enabled: true
+    base-url: http://127.0.0.1:10011
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+#############注册中心##################################
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root123:root123@127.0.0.1:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+
+##############pageHelper.config##################################
+#pagehelper:
+#  helperDialect: mysql
+#  reasonable: true
+#  supportMethodsArguments: true
+#  params: count=countSql
+##############mapper.config##################################
+
+
+
+logging:
+  level:
+    org.springframework.web: DEBUG,CONSOLE
+

@@ -1,0 +1,40 @@
+server:
+  port: 8093
+spring:
+  application:
+    name: web-service
+  jackson:
+    default-property-inclusion: non_null
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  zipkin:
+    enabled: true
+    base-url: http://127.0.0.1:10011
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root123:root123@127.0.0.1:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true  #当你获取host时，返回的不是主机名，而是ip
+    ip-address: 127.0.0.1
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+
+ribbon:
+  ConnectTimeout: 8000 # 连接超时时间(ms)
+  ReadTimeout: 8000 # 通信超时时间(ms)
+  OkToRetryOnAllOperations: true # 是否对所有操作重试
+  MaxAutoRetriesNextServer: 1 # 同一服务不同实例的重试次数
+  MaxAutoRetries: 1 # 同一实例的重试次数
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMillisecond: 10000 # 熔断超时时长：10000ms
+logging:
+  level:
+    org.springframework.web: debug
+
