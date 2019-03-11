@@ -2,10 +2,8 @@ package org.fansxnet.user.api;
 
 import org.fansxnet.common.R;
 import org.fansxnet.user.dto.User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.fansxnet.common.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 /**
  *
@@ -19,6 +17,12 @@ public interface UserApi {
 
     @PostMapping(value = "/create",consumes = {"application/json"})
     User create(@RequestBody User user);
+
+    @GetMapping(value = "/info")
+    User info(@RequestParam("uid")  Long userId);
+
+    @GetMapping(value = "/detail/{uid}")
+    User detail(@PathVariable("uid")Long userId);
 
     @GetMapping("/ok")
     R ok();

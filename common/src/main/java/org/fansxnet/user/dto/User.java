@@ -15,6 +15,7 @@ import java.util.Date;
 @ToString
 @Data
 public class User {
+    private Long userId;
     private String username;
     private String password;
     private Date createTime;
