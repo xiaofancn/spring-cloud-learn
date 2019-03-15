@@ -6,6 +6,18 @@ spring:
   zipkin:
     enabled: true
     base-url: http://127.0.0.1:10011
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: hystrix_route
+          uri: lb://web-service
+          predicates:
+            - Path=/web/**
+          filters:
+            - StripPrefix=1
 
 eureka:
   client:
@@ -25,7 +37,6 @@ zuul:
     web-service: /web/**
   add-host-header: true #携带请求本身的head头信息
   sensitive-headers: Access-Control-Allow-Origin,Access-Control-Allow-Methods,Access-Control-Allow-Credentials #匹配禁止使用的头信息，这里设置为null，否则set-cookie无效
-
 
 
 ribbon:

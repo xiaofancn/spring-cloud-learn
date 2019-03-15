@@ -1,15 +1,22 @@
 server:
   port: 8093
+
+
 spring:
   application:
     name: web-service
   jackson:
     default-property-inclusion: non_null
     time-zone: GMT+8
-    date-format: yyyy-MM-dd HH:mm:ss
   zipkin:
     enabled: true
     base-url: http://127.0.0.1:10011
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+
+
 eureka:
   client:
     service-url:
@@ -34,7 +41,3 @@ hystrix:
         isolation:
           thread:
             timeoutInMillisecond: 10000 # 熔断超时时长：10000ms
-logging:
-  level:
-    org.springframework.web: debug
-

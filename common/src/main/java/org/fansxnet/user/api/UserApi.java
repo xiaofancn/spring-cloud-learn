@@ -2,7 +2,6 @@ package org.fansxnet.user.api;
 
 import org.fansxnet.common.R;
 import org.fansxnet.user.dto.User;
-import org.fansxnet.common.annotation.PathVariable;
 import org.springframework.web.bind.annotation.*;
 
 /**

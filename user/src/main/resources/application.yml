@@ -1,15 +1,16 @@
 server:
   port: 8085
+
 spring:
   application:
     name: user-service
-  zipkin:
-    enabled: true
-    base-url: http://127.0.0.1:10011
   jackson:
     default-property-inclusion: non_null
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
+  zipkin:
+    enabled: true
+    base-url: http://127.0.0.1:10011
 #############注册中心##################################
 eureka:
   client:
@@ -27,10 +28,7 @@ eureka:
 #  supportMethodsArguments: true
 #  params: count=countSql
 ##############mapper.config##################################
-
-
-
 logging:
   level:
-    org.springframework.web: DEBUG,CONSOLE
+    org.springframework.web: info
 

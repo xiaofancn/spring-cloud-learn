@@ -44,7 +44,7 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <scope>compile</scope>
-            <version>${io.swagger.version}</version>
+            <version>${springfox.version}</version>
         </dependency>
     </dependencies>
 

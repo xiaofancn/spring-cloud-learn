@@ -7,11 +7,10 @@ import org.fansxnet.web.client.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-import java.util.Enumeration;
 
 /**
  *
@@ -25,18 +24,16 @@ import java.util.Enumeration;
 @RequestMapping("/app")
 public class UserController {
     @Autowired
-    private HttpServletRequest request;
-    @Autowired
     private UserClient userClient;
 
     @GetMapping("/createUser")
     public R create() {
-        Enumeration<String> names = request.getHeaderNames();
-        while (names.hasMoreElements()){
-            String k = names.nextElement();
-            log.info("header[ {}:{} ]",k,request.getHeader(k));
-        }
         return R.ok(userClient.create(createa()));
+    }
+
+    @GetMapping(value = "/info")
+    public R<User> info(@RequestParam("userId") Long userId){
+        return R.ok(userClient.info(userId));
     }
 
     @GetMapping("/ok")
