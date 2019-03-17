@@ -4,11 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.fansxnet.common.R;
 import org.fansxnet.user.api.UserApi;
 import org.fansxnet.user.dto.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import reactor.core.publisher.Mono;
 
 import java.util.Date;
@@ -47,9 +45,8 @@ public class UserApiImpl implements UserApi {
 
 
 
-    public R ok() {
-        HandlerMethodArgumentResolver a;
-        return R.ok("用戶爲服務");
+    public R ok() throws Exception {
+        throw new Exception("模拟异常");
     }
 
     @RequestMapping("uu")

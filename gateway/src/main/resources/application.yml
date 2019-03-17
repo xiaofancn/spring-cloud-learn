@@ -10,14 +10,14 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: true   #从注册中心寻找
       routes:
         - id: hystrix_route
-          uri: lb://web-service
+          uri: lb://web-service   #微服务名字
           predicates:
-            - Path=/web/**
+            - Path=/api/web/**
           filters:
-            - StripPrefix=1
+            - StripPrefix=2
 
 eureka:
   client:
@@ -57,6 +57,7 @@ hystrix:
 logging:
   level:
     org.springframework.web: DEBUG,CONSOLE
+    io.netty: debug
 management:
   metrics:
     web:

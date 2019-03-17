@@ -41,15 +41,24 @@ public class R <T> implements Serializable {
     public static R error(String msg) {
         return new R(ERROR_CODE, msg);
     }
-
     public static R error() {
         return error("失败");
     }
-
-
     public static R ok(Object data) {
         return new R(OK_CODE, data);
     }
+    public static R ok() {
+        return new R();
+    }
+
+    public static R just(Integer code,String msg) {
+        return new R(code, msg);
+    }
+
+
+
+
+
 
 
 

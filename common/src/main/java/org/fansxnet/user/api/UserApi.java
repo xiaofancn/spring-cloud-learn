@@ -24,5 +24,5 @@ public interface UserApi {
     User detail(@PathVariable("uid")Long userId);
 
     @GetMapping("/ok")
-    R ok();
+    R ok() throws Exception;
 }

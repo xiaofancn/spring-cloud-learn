@@ -3,6 +3,7 @@ package org.fansxnet.gateway;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.web.embedded.netty.NettyWebServer;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class GatewayApp {
     public static void main(String[] args) {
         SpringApplication.run(GatewayApp.class, args);
+        NettyWebServer a;
     }
 
     @Bean
