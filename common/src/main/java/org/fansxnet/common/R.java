@@ -37,6 +37,10 @@ public class R <T> implements Serializable {
         this.code = statusCode;
         this.data = data;
     }
+    public R(int statusCode, String msg) {
+        this.code = statusCode;
+        this.msg = msg;
+    }
 
     public static R error(String msg) {
         return new R(ERROR_CODE, msg);
