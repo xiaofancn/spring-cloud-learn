@@ -4,13 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.fansxnet.common.R;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.gateway.filter.NettyWriteResponseFilter;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -24,27 +25,32 @@ import reactor.core.publisher.Mono;
 @Configuration
 public class GlobalFiltersConfig {
 
-    public class AuthFilter implements GlobalFilter {
+    @Component
+    public class AuthFilter implements GlobalFilter, Ordered {
         @Override
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             ServerHttpRequest request = exchange.getRequest();
             String token = request.getHeaders().getFirst("token");
             if (StringUtils.isEmpty(token)) {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
-//                return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON_UTF8).body(BodyInserters.fromObject(R.error("please login"))).then();
+                //验证失败，提示登录
+                exchange.getResponse().getHeaders().add("Content-Type", "application/json;charset=UTF-8");
+                return exchange.getResponse().writeAndFlushWith(Mono.just(Mono.just(exchange.getResponse().bufferFactory().wrap(JSON.toJSONBytes(R.just(-2, "请登录"))))));
             }
             log.info("header: \n{}\n", JSON.toJSONString(request.getHeaders(), SerializerFeature.PrettyFormat));
-            return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                log.info("third post filter");
-            }));
+            //继续
+            return chain.filter(exchange).
+                    then(Mono.fromRunnable(() ->
+                    {
+                        log.info("third post filter");
+                    }));
         }
-    }
 
-    @Order(0)
-    @Bean
-    AuthFilter authFilter() {
-        return new AuthFilter();
-
+        /**
+         NettyWriteResponseFilter过滤器前面，
+         */
+        @Override
+        public int getOrder() {
+            return NettyWriteResponseFilter.WRITE_RESPONSE_FILTER_ORDER-1;
+        }
     }
 }
