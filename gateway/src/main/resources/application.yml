@@ -13,7 +13,7 @@ spring:
           enabled: true   #从注册中心寻找
       routes:
         - id: hystrix_route
-          uri: lb://web-service   #微服务名字
+          uri: lb://web-service   #web微服务
           predicates:
             - Path=/api/web/**    #访问微服务的路径
           filters:
