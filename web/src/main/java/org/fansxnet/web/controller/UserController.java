@@ -1,10 +1,12 @@
 package org.fansxnet.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.fansxnet.common.R;
 import org.fansxnet.user.dto.User;
 import org.fansxnet.web.client.UserClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +27,12 @@ import java.util.Date;
 public class UserController {
     @Autowired
     private UserClient userClient;
+
+
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping("/createUser")
     public R create() {

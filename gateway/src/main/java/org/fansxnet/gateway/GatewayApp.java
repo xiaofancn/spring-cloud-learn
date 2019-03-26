@@ -7,6 +7,11 @@ import org.springframework.boot.web.embedded.netty.NettyWebServer;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.socket.server.WebSocketService;
+import org.springframework.web.reactive.socket.server.support.HandshakeWebSocketService;
+import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
+import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyRequestUpgradeStrategy;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -39,5 +44,14 @@ public class GatewayApp {
                         .allowCredentials(true);
             }
         };
+    }
+    @Bean
+    public WebSocketHandlerAdapter handlerAdapter() {
+        return new WebSocketHandlerAdapter();
+    }
+
+    @Bean
+    public WebSocketService webSocketService() {
+        return new HandshakeWebSocketService(new ReactorNettyRequestUpgradeStrategy());
     }
 }

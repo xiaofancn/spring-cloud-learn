@@ -10,6 +10,7 @@ import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.NettyWriteResponseFilter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -33,6 +34,7 @@ public class GlobalFiltersConfig {
             String token = request.getHeaders().getFirst("token");
             if (StringUtils.isEmpty(token)) {
                 //验证失败，提示登录
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 exchange.getResponse().getHeaders().add("Content-Type", "application/json;charset=UTF-8");
                 return exchange.getResponse().writeAndFlushWith(Mono.just(Mono.just(exchange.getResponse().bufferFactory().wrap(JSON.toJSONBytes(R.just(-2, "请登录"))))));
             }

@@ -4,10 +4,6 @@ server:
 spring:
   application:
     name: user-service
-  jackson:
-    default-property-inclusion: non_null
-    time-zone: GMT+8
-    date-format: yyyy-MM-dd HH:mm:ss
   zipkin:
     enabled: true
     base-url: http://127.0.0.1:10011
@@ -30,5 +26,6 @@ eureka:
 ##############mapper.config##################################
 logging:
   level:
-    org.springframework.web: info
+    org.springframework.web: debug
 
+debug: true

@@ -19,37 +19,18 @@
     </modules>
 
     <description>Config Server Demo project for Spring Boot</description>
-
-
-
-    <!-- 设定主仓库，按设定顺序进行查找。 -->
-    <repositories>
-        <repository>
-            <id>jcenter</id>
-            <name>Repository</name>
-            <url>https://maven.aliyun.com/repository/jcenter</url>
-        </repository>
-    </repositories>
-    <!-- 设定插件仓库 -->
-    <pluginRepositories>
-        <pluginRepository>
-            <id>jcenter</id>
-            <name>Repository</name>
-            <url>https://maven.aliyun.com/repository/jcenter</url>
-        </pluginRepository>
-    </pluginRepositories>
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
         <spring-cloud.version>Finchley.SR2</spring-cloud.version>
         <mapper.starter.version>2.0.4</mapper.starter.version>
         <mysql.version>5.1.32</mysql.version>
         <pageHelper.starter.version>1.2.7</pageHelper.starter.version>
-        <springfox.version>2.9.2</springfox.version>
+        <springfox.version>3.0.0-SNAPSHOT</springfox.version>
         <druid.starter.version>1.1.10</druid.starter.version>
         <spring.boot.version>2.0.6.RELEASE</spring.boot.version>
         <spring.redis.version>2.1.1.RELEASE</spring.redis.version>
@@ -101,6 +82,9 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${springfox.version}</version>
             </dependency>
+
+
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -120,10 +104,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                </plugin>
-                <plugin>
                     <groupId>net.alchim31.maven</groupId>
                     <artifactId>scala-maven-plugin</artifactId>
                     <version>3.2.1</version>
@@ -140,14 +120,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <debuglevel>lines,vars,source</debuglevel>
-                        <compilerArgs>-parameters</compilerArgs>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
                         <skipTests>true</skipTests>
@@ -155,6 +127,46 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
+
+    <!--
+
+    默认研发环境  mvn package -DskipTests=true
+    test环境  mvn package -DskipTests=true -P=test
+      -->
+
+    <profiles>
+        <!-- 开发环境 -->
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <bootstrap.profile>dev</bootstrap.profile>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>test</id>
+            <properties>
+                <bootstrap.profile>test</bootstrap.profile>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>prod</id>
+            <properties>
+                <bootstrap.profile>prod</bootstrap.profile>
+            </properties>
+        </profile>
+    </profiles>
+
 
 </project>
