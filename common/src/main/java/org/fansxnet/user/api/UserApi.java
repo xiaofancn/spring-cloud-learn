@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public interface UserApi {
 
-    @PostMapping(value = "/create",consumes = {"application/json"})
+    @PostMapping(value = "/create")
     User create(@RequestBody User user);
 
     @GetMapping(value = "/info")
     User info(@RequestParam("uid")  Long userId);
 
     @GetMapping(value = "/detail/{uid}")
-    User detail(@PathVariable("uid")Long userId);
+    User detail(@PathVariable(name = "uid")Long userId);
 
     @GetMapping("/ok")
     R ok() throws Exception;

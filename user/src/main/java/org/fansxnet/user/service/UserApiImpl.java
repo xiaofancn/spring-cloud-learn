@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.fansxnet.common.R;
 import org.fansxnet.user.api.UserApi;
 import org.fansxnet.user.dto.User;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -23,7 +22,7 @@ public class UserApiImpl implements UserApi {
 
 
     @Override
-    public User create(@RequestBody User user) {
+    public User create( User user) {
         user.setUsername(user.getUsername() + "使用了用户服务");
         return user;
     }

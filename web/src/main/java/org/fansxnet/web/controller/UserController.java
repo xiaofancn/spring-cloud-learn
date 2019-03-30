@@ -25,15 +25,9 @@ import java.util.Date;
 @RestController
 @RequestMapping("/app")
 public class UserController {
+
     @Autowired
     private UserClient userClient;
-
-
-    @Autowired
-    private ApplicationContext applicationContext;
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @GetMapping("/createUser")
     public R create() {
         return R.ok(userClient.create(createa()));
@@ -41,7 +35,7 @@ public class UserController {
 
     @GetMapping(value = "/info")
     public R<User> info(@RequestParam("userId") Long userId){
-        return R.ok(userClient.info(userId));
+        return R.ok(userClient.detail(userId));
     }
 
     @GetMapping("/ok")

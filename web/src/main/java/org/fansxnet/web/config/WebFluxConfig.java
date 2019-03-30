@@ -3,6 +3,7 @@ package org.fansxnet.web.config;
 import org.fansxnet.web.controller.ChatController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.web.reactive.HandlerMapping;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.socket.server.upgrade.ReactorNettyReques
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description: <br>
@@ -28,8 +30,8 @@ import java.util.Map;
 public class WebFluxConfig implements WebFluxConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/html/**")
-                .addResourceLocations("classpath:/html/");
+        registry.addResourceHandler("/html/**").addResourceLocations("classpath:/META-INF/resources/")
+                .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));
         registry.addResourceHandler("/swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
@@ -42,7 +44,6 @@ public class WebFluxConfig implements WebFluxConfigurer {
     public HandlerMapping handlerMapping() {
         Map<String, WebSocketHandler> map = new HashMap<>();
         map.put("/chat", new ChatController());
-
         SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
         mapping.setUrlMap(map);
         mapping.setOrder(-1); // before annotated controllers

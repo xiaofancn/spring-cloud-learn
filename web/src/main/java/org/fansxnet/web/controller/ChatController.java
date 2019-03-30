@@ -23,8 +23,13 @@ public class ChatController implements WebSocketHandler {
     @Override
     public Mono<Void> handle(WebSocketSession session) {
         sessionMap.put(session.getId(), session);
+        broadcast(session.getId() + "进来了。总人数为" + sessionMap.size());
         log.info("记录连接{}", session.getId());
-        return session.receive().doOnNext(webSocketMessage -> {
+        return session.receive().doOnComplete(() -> {
+                    sessionMap.remove(session.getId());
+                    broadcast(session.getId() + "离开了。总人数为" + sessionMap.size());
+                }
+        ).doOnNext(webSocketMessage -> {
         }).concatMap(webSocketMessage -> {
             broadcast(webSocketMessage.getPayloadAsText());
             return Flux.empty();
