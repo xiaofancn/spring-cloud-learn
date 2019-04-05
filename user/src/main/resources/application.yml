@@ -1,21 +1,36 @@
 server:
   port: 8085
-
 spring:
   application:
     name: user-service
   zipkin:
     enabled: true
     base-url: http://127.0.0.1:10011
+  datasource:
+    url: jdbc:mysql://192.168.1.9:3306/fansxnet-product?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+mybatis:
+  pojo-config-locations: classpath:json/
+  mapper-Locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
 #############注册中心##################################
 eureka:
   client:
+    region: beijing
+    availability-zones:
+      beijing: zone-1
     service-url:
-      defaultZone: http://root123:root123@127.0.0.1:8761/eureka
+      zone-1: http://root123:root123@127.0.0.1:8761/eureka
+    registry-fetch-interval-seconds: 5
+
   instance:
     instance-id: ${spring.application.name}:${server.port}
     prefer-ip-address: true
     ip-address: 127.0.0.1
+    metadata-map:
+      zone: zone-1
 
 ##############pageHelper.config##################################
 #pagehelper:
@@ -26,6 +41,6 @@ eureka:
 ##############mapper.config##################################
 logging:
   level:
-    org.springframework.web: debug
+    org.springframework.web: info
+    org.fansxnet: debug
 
-debug: true

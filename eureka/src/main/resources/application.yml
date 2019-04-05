@@ -13,15 +13,19 @@ spring:
 
 eureka:
   client:
-    service-url:
-      defaultZone: http://root123:root123@127.0.0.1:8761/eureka
     fetch-registry: false
     register-with-eureka: false
+    region: beijing
+    prefer-same-zone-eureka: true
+    availability-zones:
+      beijing: zone-1
+    service-url:
+      zone-1: http://root123:root123@127.0.0.1:8761/eureka
+
   server:
     enable-self-preservation: false  #关闭自我保护
     eviction-interval-timer-in-ms: 5000 #每隔5秒进行一次服务列表清理
     peer-node-read-timeout-ms: 20000
-
 logging:
   level:
     org.springframework.web: DEBUG,CONSOLE

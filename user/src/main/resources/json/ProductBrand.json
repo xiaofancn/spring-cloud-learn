@@ -1,0 +1,8 @@
+{
+  "table": "product_brand",
+  "propColumn": {
+    "id": "id",
+    "name": "name"
+  },
+  "propKey": ["id"]
+}

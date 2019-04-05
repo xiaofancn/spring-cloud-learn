@@ -21,13 +21,18 @@ spring:
 
 eureka:
   client:
+    region: beijing
+    availability-zones:
+      beijing: zone-1
     service-url:
-      defaultZone: http://root123:root123@127.0.0.1:8761/eureka
+      zone-1: http://root123:root123@127.0.0.1:8761/eureka
     registry-fetch-interval-seconds: 5
   instance:
     instance-id: ${spring.application.name}:${server.port}
     prefer-ip-address: true  #当你获取host时，返回的不是主机名，而是ip
     ip-address: 127.0.0.1
+    metadata-map:
+      zone: zone-1
 
 zuul:
   prefix: /api # 添加路由前缀

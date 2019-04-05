@@ -1,0 +1,8 @@
+{
+  "table": "product_area",
+  "propColumn": {
+    "id": "id",
+    "productSpuId":"product_spu_id"
+  },
+  "propKey": ["id"]
+}
