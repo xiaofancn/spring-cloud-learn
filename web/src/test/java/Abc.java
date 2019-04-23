@@ -1,4 +1,5 @@
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.fansxnet.user.dto.User;
 import org.fansxnet.web.client.UserClient;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
 import java.time.Duration;
@@ -47,14 +49,19 @@ public class Abc {
                 })
                 .subscribe(e -> log.info("get:{}", e));
     }
+
     @Test
     public void testFaltMap() throws InterruptedException {
-        Flux.just(1,2,3,4)
+        Integer [] arr = new Integer[1000000];
+        for (int i = 0; i <1000000 ; i++) {
+            arr[i] = i;
+        }
+        Flux<Integer> stream = Flux.just(arr)
                 .log()
                 .flatMap(e -> {
-                    return Flux.just(e*2).delayElements(Duration.ofSeconds(1));
-                })
-                .subscribe(e -> log.info("get:{}",e));
-        TimeUnit.SECONDS.sleep(10);
+                    return Flux.just(e * 2);
+                });
+        stream.subscribe(e -> log.info("get:{}", e));
+        stream.blockLast();
     }
 }

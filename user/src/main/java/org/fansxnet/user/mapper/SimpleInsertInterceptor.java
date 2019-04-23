@@ -4,11 +4,11 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.plugin.*;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.fansxnet.common.PojoConfig;
 import org.fansxnet.common.annotation.Model;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,10 +24,9 @@ import java.util.*;
  * @Project: hades <br>
  * @CreateDate: Created in 2019/4/5 09:39 <br>
  * @Author: <a href="xiaofancn@qq.com">abc</a>
- *
+ * <p>
  * see
  * https://www.programcreek.com/java-api-examples/?api=org.apache.ibatis.mapping.ParameterMap
- *
  */
 @Slf4j
 @Component
@@ -46,44 +45,92 @@ public class SimpleInsertInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        MappedStatement mappedStatement = (MappedStatement) invocation
-                .getArgs()[0];
+        MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+
+        if (!mappedStatement.getSqlCommandType().equals(SqlCommandType.INSERT) && !mappedStatement.getSqlCommandType().equals(SqlCommandType.UPDATE)) {
+            return invocation.proceed();
+        }
+
+        final BoundSql boundSql  = mappedStatement.getBoundSql(invocation.getArgs()[1]);
+        if(!"Common".equals(boundSql.getSql())){
+            return invocation.proceed();
+        }
+
+        MapperMethod.ParamMap<Object> paramMap = (MapperMethod.ParamMap<Object>) invocation.getArgs()[1];
+        Object data = paramMap.get("entity");
+        Model model = data.getClass().getAnnotation(Model.class);
+        if (!"Common".equals(boundSql.getSql())) {
+            return invocation.proceed();
+        }
+
         if (mappedStatement.getSqlCommandType().equals(SqlCommandType.INSERT)) {
-            Object data = invocation.getArgs()[1];
-            Model model = data.getClass().getAnnotation(Model.class);
-            if (model != null) {
-                final BoundSql boundSql = mappedStatement.getBoundSql(data);
-                PojoConfig config = load(model.json());
-                StringBuffer sql = new StringBuffer(String.format("insert into %s ", config.getTable()));
-                List<String> prop = new ArrayList<>(config.getPropColumn().size());
-                List<String> colu = new ArrayList<>(config.getPropColumn().size());
-                List<ParameterMapping> ppps = new ArrayList<>(config.getPropColumn().size());
-                config.getPropColumn().forEach((k, v) -> {
-                    try {
-                        Object val = invoke(data, k);
-                        if (invoke(data, k) != null) {
-                            prop.add("?");
-                            colu.add(v.contains("`") ? v : "`" + v + "`");
-                            ppps.add(
-                                    new ParameterMapping.Builder(mappedStatement.getConfiguration(), k, mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(val.getClass())).build()
-                            );
-                        }
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
+            PojoConfig config = load(model.json());
+            StringBuilder sql = new StringBuilder(String.format("insert into %s ", config.getTable()));
+            List<String> prop = new ArrayList<>(config.getPropColumn().size());
+            List<String> colu = new ArrayList<>(config.getPropColumn().size());
+            List<ParameterMapping> ppps = new ArrayList<>(config.getPropColumn().size());
+            config.getPropColumn().forEach((k, v) -> {
+                try {
+                    Object val = invoke(data, k);
+                    if (invoke(data, k) != null) {
+                        prop.add("?");
+                        colu.add(v.contains("`") ? v : "`" + v + "`");
+                        ppps.add(
+                                new ParameterMapping.Builder(mappedStatement.getConfiguration(),"entity."+k, mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(val.getClass())).build()
+                        );
                     }
-                });
-                sql.append(String.format("(%s) values (%s)", StringUtils.join(colu, ","), StringUtils.join(prop, ",")));
-                BoundSql newBoundSql = new BoundSql(mappedStatement.getConfiguration(), sql.toString(), ppps, boundSql.getParameterObject());
-                log.info("new sql: {}", newBoundSql.getSql());
-                MappedStatement newMs = copyFromMappedStatement(mappedStatement, new BoundSqlSqlSource(newBoundSql), config.getPropKey());
-                invocation.getArgs()[0] = newMs;
+                } catch (Exception e) {
+                    log.info("处理插入语句错误{}", e.getLocalizedMessage());
+                    e.printStackTrace();
+                }
+            });
+            sql.append(String.format("(%s) values (%s)", StringUtils.join(colu, ","), StringUtils.join(prop, ",")));
+            BoundSql newBoundSql = new BoundSql(mappedStatement.getConfiguration(), sql.toString(), ppps, boundSql.getParameterObject());
+            log.info("new sql: {}", newBoundSql.getSql());
+            MappedStatement newMs = copyFromMappedStatement(mappedStatement, new BoundSqlSqlSource(newBoundSql), config.getPropKey());
+            invocation.getArgs()[0] = newMs;
+        } else if (mappedStatement.getSqlCommandType().equals(SqlCommandType.UPDATE)) {
+            PojoConfig config = load(model.json());
+            StringBuilder sql = new StringBuilder(String.format("update %s set ", config.getTable()));
+            boolean updateForParams = paramMap.containsKey("params");
+            List<String> colu = new ArrayList<>(config.getPropColumn().size());
+            List<ParameterMapping> ppps = new ArrayList<>(config.getPropColumn().size());
+            config.getPropColumn().forEach((k, v) -> {
+                try {
+                    Object val = invoke(data, k);
+                    if (invoke(data, k) != null) {
+                        colu.add(v.contains("`") ? v : "`" + v + "`=?");
+                        ppps.add(builderParameterMapping(mappedStatement, "entity."+k, val));
+                    }else{
+
+                    }
+                } catch (Exception e) {
+                    log.info("处理插入语句错误{}", e.getLocalizedMessage());
+                    e.printStackTrace();
+                }
+            });
+
+            StringBuilder where = new StringBuilder(" where 1=1");
+            if (config.getPropKey() != null && config.getPropKey().length > 0) {
+                if(!updateForParams){
+                    String k = config.getPropKey()[0];
+                    where.append(String.format(" and %s=? ", config.getPropColumn().get(k)));
+                    ppps.add(builderParameterMapping(mappedStatement,  "entity."+k, invoke(data, k)));
+                }
             }
+            sql.append(String.format(" %s ", StringUtils.join(colu, ",")));
+            sql.append(where);
+            BoundSql newBoundSql = new BoundSql(mappedStatement.getConfiguration(), sql.toString(), ppps, boundSql.getParameterObject());
+            log.info("new sql: {}", newBoundSql.getSql());
+            MappedStatement newMs = copyFromMappedStatement(mappedStatement, new BoundSqlSqlSource(newBoundSql), config.getPropKey());
+            invocation.getArgs()[0] = newMs;
         }
         return invocation.proceed();
+    }
+
+
+    private ParameterMapping builderParameterMapping(MappedStatement mappedStatement, String k, Object val) {
+        return new ParameterMapping.Builder(mappedStatement.getConfiguration(), k, mappedStatement.getConfiguration().getTypeHandlerRegistry().getTypeHandler(val.getClass())).build();
     }
 
     private synchronized PojoConfig load(String json) {
@@ -138,7 +185,7 @@ public class SimpleInsertInterceptor implements Interceptor {
             builder.keyProperty(ms.getKeyProperties()[0]);
         }
         if (keyProps != null && keyProps.length > 0) {
-            builder.keyProperty(keyProps[0]);
+            builder.keyProperty("entity."+keyProps[0]);
             builder.keyGenerator(new Jdbc3KeyGenerator());
         }
         builder.timeout(ms.getTimeout());

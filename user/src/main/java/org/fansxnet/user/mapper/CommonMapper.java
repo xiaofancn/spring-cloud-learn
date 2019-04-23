@@ -2,6 +2,10 @@ package org.fansxnet.user.mapper;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
+
+import java.util.Map;
 
 /**
  * @Description: <br>
@@ -11,6 +15,12 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface CommonMapper {
-    @Insert("")
-    public int insert(Object record);
+    @Insert("Common")
+    int insert(@Param("entity")Object record);
+
+    @Update("Common")
+    int updateByPrimaryKey(@Param("entity")Object record);
+
+    @Update("Common")
+    int update(@Param("entity")Object record,@Param("params") Map<String,Object> params);
 }
