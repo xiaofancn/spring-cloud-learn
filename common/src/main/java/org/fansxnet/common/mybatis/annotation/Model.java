@@ -1,4 +1,4 @@
-package org.fansxnet.common.annotation;
+package org.fansxnet.common.mybatis.annotation;
 
 import java.lang.annotation.*;
 

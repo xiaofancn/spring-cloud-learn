@@ -1,7 +1,7 @@
 package org.fansxnet.user.entity;
 
 import lombok.Data;
-import org.fansxnet.common.annotation.Model;
+import org.fansxnet.common.mybatis.annotation.Model;
 
 /**
  * @Description: <br>

@@ -1,11 +1,8 @@
 package org.fansxnet.user.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
-
-import java.util.Map;
+import org.apache.ibatis.annotations.*;
+import org.fansxnet.common.mybatis.provider.ExampleX;
+import org.fansxnet.common.mybatis.provider.SimpleSqlProvider;
 
 /**
  * @Description: <br>
@@ -15,12 +12,13 @@ import java.util.Map;
  */
 @Mapper
 public interface CommonMapper {
-    @Insert("Common")
-    int insert(@Param("entity")Object record);
+    @InsertProvider(type = SimpleSqlProvider.class, method = "insertSelective")
+    @Options(useGeneratedKeys = true, keyProperty = "entity.id")
+    int xInsertSelective(@Param("entity")Object record);
 
-    @Update("Common")
-    int updateByPrimaryKey(@Param("entity")Object record);
+    @UpdateProvider(type = SimpleSqlProvider.class, method = "updateByPrimaryKeySelective")
+    int xUpdateByPrimaryKeySelective(@Param("entity")Object record);
 
-    @Update("Common")
-    int update(@Param("entity")Object record,@Param("params") Map<String,Object> params);
+    @UpdateProvider(type = SimpleSqlProvider.class, method = "updateByExampleSelective")
+    int xUpdateByExampleSelective(@Param("entity")Object record,@Param("example") ExampleX exampleX);
 }

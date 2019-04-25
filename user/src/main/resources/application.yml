@@ -7,9 +7,9 @@ spring:
     enabled: true
     base-url: http://127.0.0.1:10011
   datasource:
-    url: jdbc:mysql://192.168.1.9:3306/fansxnet-product?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://192.168.1.166:3306/juranwuyou-product?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
     username: root
-    password: 123456
+    password: JrWy@1234!@#
 mybatis:
   pojo-config-locations: classpath:json/
   mapper-Locations: classpath:mapper/*.xml
