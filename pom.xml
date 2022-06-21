@@ -27,7 +27,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
         <mapper.starter.version>2.0.4</mapper.starter.version>
-        <mysql.version>8.0.14</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
         <pageHelper.starter.version>1.2.7</pageHelper.starter.version>
         <springfox.version>2.9.2</springfox.version>
         <druid.starter.version>1.1.10</druid.starter.version>
